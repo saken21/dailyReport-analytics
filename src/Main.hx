@@ -22,7 +22,7 @@ class Main {
 	
 	public static function main():Void {
 		
-		//new JQuery('document').ready(Manager.init);
+		new JQuery('document').ready(Manager.init);
 		
 	}
 
