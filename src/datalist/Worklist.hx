@@ -1,10 +1,11 @@
 package src.datalist;
 
 import js.JQuery;
+import src.view.Form;
 
 class Worklist {
 	
-	private static var _jDatalist:JQuery;
+	private static var _jOptions:JQuery;
 	private static inline var TABLE_NAME:String = 'works';
 	
 	/* =======================================================================
@@ -12,20 +13,43 @@ class Worklist {
 	========================================================================== */
 	public static function init():Void {
 		
-		_jDatalist = new JQuery('#worklist');
-		set();
+		var jParent:JQuery = new JQuery('#worklist');
+		
+		jParent.on('setDatalist',function(event:JqEvent):Void {
+			_jOptions = jParent.find('option');
+		});
+		
+		Datalist.set(jParent,TABLE_NAME,['id','name','client_id']);
+		
 		
 	}
 	
 		/* =======================================================================
-		Public - Set
+		Public - Select
 		========================================================================== */
-		public static function set(clientID:Int = null):Void {
+		public static function select(clientID:Int):Void {
 			
-			var where:String = '';
-			if (clientID != null) where = 'client_id = ' + clientID;
+			if (clientID == null) {
+				
+				_jOptions.prop('disabled',false);
+				
+			} else {
+				
+				_jOptions.prop('disabled',true);
+				_jOptions.filter('[data-clientid="' + clientID + '"]').prop('disabled',false);
+				
+			}
 			
-			Datalist.set(_jDatalist,TABLE_NAME,where);
+			Form.setInput('work');
+
+		}
+		
+		/* =======================================================================
+		Public - Get ID
+		========================================================================== */
+		public static function getID(value:String):Int {
+			
+			return _jOptions.filter('[value="' + value + '"]').data('id');
 
 		}
 

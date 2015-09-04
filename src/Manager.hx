@@ -2,6 +2,7 @@ package src;
 
 import js.JQuery;
 import src.datalist.*;
+import src.view.*;
  
 class Manager {
 	
@@ -12,7 +13,10 @@ class Manager {
 		
 		Clientlist.init();
 		Worklist.init();
+		Teamlist.init();
 		Memberlist.init();
+		
+		Form.init();
 		
 	}
 

@@ -2,32 +2,26 @@ package src.datalist;
 
 import js.JQuery;
 
-class Clientlist {
+class Teamlist {
 	
 	private static var _jOptions:JQuery;
-	private static inline var TABLE_NAME:String = 'clients';
 	
 	/* =======================================================================
 	Public - Init
 	========================================================================== */
 	public static function init():Void {
 		
-		var jParent:JQuery = new JQuery('#clientlist');
-		
-		jParent.on('setDatalist',function(event:JqEvent):Void {
-			_jOptions = jParent.find('option');
-		});
-		
-		Datalist.set(jParent,TABLE_NAME,['id','name']);
+		var jParent:JQuery = new JQuery('#teamlist');
+		_jOptions = jParent.find('option');
 		
 	}
 		
 		/* =======================================================================
-		Public - Get ID
+		Public - Get Team
 		========================================================================== */
-		public static function getID(value:String):Int {
+		public static function getTeam(value:String):String {
 			
-			return _jOptions.filter('[value="' + value + '"]').data('id');
+			return _jOptions.filter('[value="' + value + '"]').data('team');
 
 		}
 

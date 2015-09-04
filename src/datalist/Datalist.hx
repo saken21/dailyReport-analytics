@@ -8,11 +8,11 @@ class Datalist {
 	/* =======================================================================
 	Public - Set
 	========================================================================== */
-	public static function set(jTarget:JQuery,table:String,where:String = ''):Void {
+	public static function set(jTarget:JQuery,table:String,columns:Array<String>):Void {
 
-		Ajax.getData(table,['id','name'],function(data:Array<Dynamic>):Void {
-			jTarget.html(getHTML(data));
-		},where);
+		Ajax.getData(table,columns,function(data:Array<Dynamic>):Void {
+			jTarget.html(getHTML(data)).trigger('setDatalist');
+		});
 
 	}
 	
@@ -26,7 +26,15 @@ class Datalist {
 		for (p in 0...data.length) {
 			
 			var info:Dynamic = data[p];
-			html += '<option value="' + info.name + '" data-id="' + info.id + '"></option>';
+			var id  :Int     = info.id;
+			
+			var clientID:Int = info.client_id;
+			var team:String = info.team;
+			
+			var dataClient:String = (clientID == null) ? '' : ' data-clientid="' + clientID + '"';
+			var dataTeam  :String = (team == null) ? '' : ' data-team="' + team + '"';
+			
+			html += '<option value="' + info.name + '" data-id="' + id + '"' + dataClient + dataTeam + '></option>';
 			
 		}
 		
