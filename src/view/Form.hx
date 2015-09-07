@@ -61,7 +61,10 @@ class Form {
 		var workID  :Int    = Worklist.getID(_jInputs.filter('.work').prop('value'));
 		var team    :String = Teamlist.getTeam(_jInputs.filter('.team').prop('value'));
 		var memberID:Int    = Memberlist.getID(_jInputs.filter('.member').prop('value'));
-		trace(memberID);
+		var fromtime:String = _jInputs.filter('.fromtime').prop('value');
+		var totime  :String = _jInputs.filter('.totime').prop('value');
+		
+		Result.show(clientID,workID,team,memberID,fromtime,totime);
 		
 		return untyped false;
 		

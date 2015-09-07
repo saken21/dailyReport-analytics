@@ -5,21 +5,44 @@ import jp.saken.utils.Ajax;
 
 class Datalist {
 	
+	private var _db:Array<Dynamic>;
+	
 	/* =======================================================================
-	Public - Set
+	Constructor
 	========================================================================== */
-	public static function set(jTarget:JQuery,table:String,columns:Array<String>):Void {
+	public function new(jTarget:JQuery,table:String,columns:Array<String>):Void {
 
 		Ajax.getData(table,columns,function(data:Array<Dynamic>):Void {
+			
+			_db = data;
 			jTarget.html(getHTML(data)).trigger('setDatalist');
+			
 		});
 
 	}
 	
+		/* =======================================================================
+		Public - Get DB
+		========================================================================== */
+		public function getDB():Array<Dynamic> {
+			
+			var array:Array<Dynamic> = [];
+			
+			for (p in 0..._db.length) {
+				
+				var info:Dynamic = _db[p];
+				array[info.id] = info;
+				
+			}
+
+			return array;
+
+		}
+	
 	/* =======================================================================
 	Get HTML
 	========================================================================== */
-	private static function getHTML(data:Array<Dynamic>):String {
+	private function getHTML(data:Array<Dynamic>):String {
 		
 		var html:String = '';
 		

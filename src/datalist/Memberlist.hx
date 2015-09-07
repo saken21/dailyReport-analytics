@@ -5,7 +5,9 @@ import src.view.Form;
 
 class Memberlist {
 	
+	private static var _datalist:Datalist;
 	private static var _jOptions:JQuery;
+	
 	private static inline var TABLE_NAME:String = 'members';
 	
 	/* =======================================================================
@@ -19,7 +21,7 @@ class Memberlist {
 			_jOptions = jParent.find('option');
 		});
 		
-		Datalist.set(jParent,TABLE_NAME,['id','name','team']);
+		_datalist = new Datalist(jParent,TABLE_NAME,['id','name','team']);
 		
 	}
 	
@@ -49,6 +51,15 @@ class Memberlist {
 		public static function getID(value:String):Int {
 			
 			return _jOptions.filter('[value="' + value + '"]').data('id');
+
+		}
+		
+		/* =======================================================================
+		Public - Get DB
+		========================================================================== */
+		public static function getDB():Array<Dynamic> {
+			
+			return _datalist.getDB();
 
 		}
 
