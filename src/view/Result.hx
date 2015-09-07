@@ -2,9 +2,9 @@ package src.view;
 
 import js.JQuery;
 import jp.saken.utils.Ajax;
-import src.datalist.Clientlist;
-import src.datalist.Worklist;
-import src.datalist.Memberlist;
+import src.db.Clients;
+import src.db.Works;
+import src.db.Members;
 import src.utils.Csv;
 
 class Result {
@@ -27,16 +27,13 @@ class Result {
 		/* =======================================================================
 		Public - Show
 		========================================================================== */
-		public static function show(clientID:Int,workID:Int,team:String,memberID:Int,fromtime:String,totime:String):Void {
+		public static function show(clientID:Int,workID:Int,fromtime:String,totime:String):Void {
 
-			_clients = Clientlist.getDB();
-			_works   = Worklist.getDB();
-			_members = Memberlist.getDB();
+			_clients = Clients.getDB();
+			_works   = Works.getDB();
+			_members = Members.getDB();
 
-			var workIDList  :Array<Int> = getWorkIDList(clientID,workID);
-			var memberIDList:Array<Int> = getMemberIDList(team,memberID);
-
-			setTasks(workIDList,memberIDList,fromtime,totime);
+			setTasks(getWorkIDList(clientID,workID),fromtime,totime);
 
 		}
 	
@@ -80,59 +77,17 @@ class Result {
 	}
 	
 	/* =======================================================================
-	Get MemberID List
-	========================================================================== */
-	private static function getMemberIDList(team:String,memberID:Int):Array<Int> {
-		
-		var array:Array<Int> = [];
-		
-		if (memberID == null) {
-			
-			if (team == null) {
-				
-				for (p in 0..._members.length) {
-					
-					var info:Dynamic = _works[p];
-					if (info != null) array.push(_members[p].id);
-					
-				}
-				
-			} else {
-				
-				for (p in 0..._members.length) {
-					
-					var info:Dynamic = _members[p];
-					if (info != null && info.team == team) array.push(info.id);
-					
-				}
-				
-			}
-			
-		} else {
-			
-			array = [memberID];
-			
-		}
-		
-		return array;
-		
-	}
-	
-	/* =======================================================================
 	Set Tasks
 	========================================================================== */
-	private static function setTasks(workIDList:Array<Int>,memberIDList:Array<Int>,fromtime:String,totime:String):Void {
+	private static function setTasks(workIDList:Array<Int>,fromtime:String,totime:String):Void {
 		
 		var columns:Array<String> = ['member_id','work_id','hour','updatetime'];
 		var where:String = 'updatetime >= "' + fromtime + '" AND updatetime <= "' + totime + '"';
 		
 		where += ' AND ' + getJoinedWhere(workIDList,'work_id');
-		where += ' AND ' + getJoinedWhere(memberIDList,'member_id');
 		
 		Ajax.getData('tasks',columns,function(data:Array<Dynamic>):Void {
-			
-			analyzeTasks(data);
-		
+			exportCSV(data);
 		},where);
 		
 	}
@@ -156,11 +111,10 @@ class Result {
 	}
 	
 	/* =======================================================================
-	Analyze Tasks
+	Export CSV
 	========================================================================== */
-	private static function analyzeTasks(tasks:Array<Dynamic>):Void {
+	private static function exportCSV(tasks:Array<Dynamic>):Void {
 		
-		var totalHour:Float = 0;
 		var array:Array<Array<Dynamic>> = [];
 		
 		for (p in 0...tasks.length) {
@@ -168,7 +122,7 @@ class Result {
 			var info      :Dynamic = tasks[p];
 			var memberID  :Int     = info.member_id;
 			var workID    :Int     = info.work_id;
-			var hour      :Float   = info.hour;
+			var hour      :Float   = Std.parseFloat(info.hour);
 			var updatetime:String  = info.updatetime;
 			
 			var workInfo  :Dynamic = _works[workID];
@@ -179,13 +133,11 @@ class Result {
 			var memberName:String  = memberInfo.name;
 			var team      :String  = memberInfo.team;
 			
-			totalHour += Math.floor(info.hour);
 			array.push([clientName,workName,team,memberName,hour,updatetime]);
 			
 		}
 		
 		Csv.export(array);
-		_jParent.text(totalHour + '時間');
 		
 	}
 

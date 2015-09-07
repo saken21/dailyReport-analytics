@@ -3,10 +3,9 @@ package src.view;
 import js.JQuery;
 import jp.saken.utils.Dom;
 import jp.saken.utils.Handy;
-import src.datalist.Clientlist;
+import src.db.Clients;
+import src.db.Works;
 import src.datalist.Worklist;
-import src.datalist.Teamlist;
-import src.datalist.Memberlist;
 
 class Form {
 	
@@ -18,7 +17,7 @@ class Form {
 	========================================================================== */
 	public static function init():Void {
 		
-		_jParent = new JQuery('#form');
+		_jParent = new JQuery('#form').addClass('onReady');
 		_jInputs = _jParent.find('input');
 		
 		var now:String = Handy.getPastDate(Date.now().toString(),0);
@@ -46,8 +45,7 @@ class Form {
 		var jTarget:JQuery = new JQuery(event.target);
 		var value  :String = jTarget.prop('value');
 		
-		if (jTarget.hasClass('client')) Worklist.select(Clientlist.getID(value));
-		if (jTarget.hasClass('team')) Memberlist.select(Teamlist.getTeam(value));
+		if (jTarget.hasClass('client')) Worklist.select(Clients.getID(value));
 		if (jTarget.hasClass('fromtime')) _jInputs.filter('.totime').prop('min',value);
 		
 	}
@@ -57,14 +55,14 @@ class Form {
 	========================================================================== */
 	private static function submit(event:JqEvent):Void {
 		
-		var clientID:Int    = Clientlist.getID(_jInputs.filter('.client').prop('value'));
-		var workID  :Int    = Worklist.getID(_jInputs.filter('.work').prop('value'));
-		var team    :String = Teamlist.getTeam(_jInputs.filter('.team').prop('value'));
-		var memberID:Int    = Memberlist.getID(_jInputs.filter('.member').prop('value'));
+		if (!_jParent.hasClass('onReady')) return untyped false;
+		
+		var clientID:Int    = Clients.getID(_jInputs.filter('.client').prop('value'));
+		var workID  :Int    = Works.getID(_jInputs.filter('.work').prop('value'));
 		var fromtime:String = _jInputs.filter('.fromtime').prop('value');
 		var totime  :String = _jInputs.filter('.totime').prop('value');
 		
-		Result.show(clientID,workID,team,memberID,fromtime,totime);
+		Result.show(clientID,workID,fromtime,totime);
 		
 		return untyped false;
 		

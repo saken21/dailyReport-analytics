@@ -1,27 +1,20 @@
 package src.datalist;
 
 import js.JQuery;
+import src.db.Works;
 import src.view.Form;
 
 class Worklist {
 	
-	private static var _datalist:Datalist;
 	private static var _jOptions:JQuery;
-	
-	private static inline var TABLE_NAME:String = 'works';
 	
 	/* =======================================================================
 	Public - Init
 	========================================================================== */
 	public static function init():Void {
 		
-		var jParent:JQuery = new JQuery('#worklist');
-		
-		jParent.on('setDatalist',function(event:JqEvent):Void {
-			_jOptions = jParent.find('option');
-		});
-		
-		_datalist = new Datalist(jParent,TABLE_NAME,['id','name','client_id']);
+		var jParent:JQuery = new JQuery('#worklist').html(Datalist.getHTML(Works.getDB()));
+		_jOptions = jParent.find('option');
 		
 	}
 	
@@ -42,24 +35,6 @@ class Worklist {
 			}
 			
 			Form.setInput('work');
-
-		}
-		
-		/* =======================================================================
-		Public - Get ID
-		========================================================================== */
-		public static function getID(value:String):Int {
-			
-			return _jOptions.filter('[value="' + value + '"]').data('id');
-
-		}
-		
-		/* =======================================================================
-		Public - Get DB
-		========================================================================== */
-		public static function getDB():Array<Dynamic> {
-			
-			return _datalist.getDB();
 
 		}
 
