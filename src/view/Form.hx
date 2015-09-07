@@ -4,7 +4,6 @@ import js.JQuery;
 import jp.saken.utils.Dom;
 import jp.saken.utils.Handy;
 import src.db.Clients;
-import src.db.Works;
 import src.datalist.Worklist;
 
 class Form {
@@ -57,12 +56,12 @@ class Form {
 		
 		if (!_jParent.hasClass('onReady')) return untyped false;
 		
-		var clientID:Int    = Clients.getID(_jInputs.filter('.client').prop('value'));
-		var workID  :Int    = Works.getID(_jInputs.filter('.work').prop('value'));
-		var fromtime:String = _jInputs.filter('.fromtime').prop('value');
-		var totime  :String = _jInputs.filter('.totime').prop('value');
+		var clientName:String = _jInputs.filter('.client').prop('value');
+		var workName  :String = _jInputs.filter('.work').prop('value');
+		var fromtime  :String = _jInputs.filter('.fromtime').prop('value');
+		var totime    :String = _jInputs.filter('.totime').prop('value');
 		
-		Result.show(clientID,workID,fromtime,totime);
+		Result.show(clientName,workName,fromtime,totime);
 		
 		return untyped false;
 		
