@@ -1,11 +1,11 @@
 /**
 * ================================================================================
 *
-* Daily Report Analytics ver 1.00.00
+* Daily Report Analytics ver 1.00.01
 *
 * Author : KENTA SAKATA
 * Since  : 2015/09/01
-* Update : 2015/09/01
+* Update : 2015/09/08
 *
 * Licensed under the MIT License
 * Copyright (c) Kenta Sakata

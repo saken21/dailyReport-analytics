@@ -40,64 +40,131 @@ class Result {
 				_jParent.find('.client').text(clientName);
 				_jParent.find('.work').text(workName);
 				
-				setHTML(DB.getExtractedList());
+				set(DB.getExtractedList(),DB.getRowList());
 				
 			});
 
 		}
 	
 	/* =======================================================================
-	Set HTML
+	Set
 	========================================================================== */
-	private static function setHTML(data:Dynamic):Void {
+	private static function set(data:Dynamic,all:Dynamic):Void {
 		
-		var totaltime   :Float        = data.totaltime;
-		var members     :Array<Int>   = data.members;
-		var memberLenght:Int          = members.length;
-		var memberTimes :Array<Float> = data.memberTimes;
+		var totaltime:Float = data.totaltime;
 		
-		var jDescription:JQuery = _jParent.find('.description');
+		setDescription(_jParent.find('.description'),data.members.length,totaltime);
+		setTeam(_jParent.find('.team'),data.teamTimes,totaltime,all.teamTimes);
+		setPerson(_jParent.find('.person'),data.memberTimes,totaltime,all.memberTimes);
 		
-		jDescription.find('.totaltime').find('dd').text(Std.string(totaltime));
-		jDescription.find('.perperson').find('dd').text(Std.string(Math.floor(totaltime / memberLenght * 10)  / 10));
-		jDescription.find('.price').find('dd').text(Std.string(PAYMENT * totaltime));
+	}
+	
+	/* =======================================================================
+	Set Description
+	========================================================================== */
+	private static function setDescription(jParent:JQuery,memberLength:Int,totaltime:Float):Void {
 		
-		_jParent.find('.person').html((function(array:Array<Float>):String {
+		var perperson:Float = Math.floor(totaltime / memberLength * 10) / 10;
+		if (Math.isNaN(perperson)) perperson = 0;
+		
+		jParent.find('.totaltime').find('dd').text(Std.string(totaltime));
+		jParent.find('.perperson').find('dd').text(Std.string(perperson));
+		jParent.find('.price').find('dd').text(Std.string(PAYMENT * totaltime));
+		
+	}
+	
+	/* =======================================================================
+	Set Team
+	========================================================================== */
+	private static function setTeam(jParent:JQuery,map:Map<String,Float>,totaltime:Float,all:Map<String,Float>):Void {
+		
+		jParent.find('dl').each(function():Void {
 			
-			var html:String = '';
+			var jTarget    :JQuery = JQuery.cur;
+			var team       :String = jTarget.prop('class');
+			var teamTime   :Float  = map.get(team);
+			var allTeamTime:Float  = all.get(team);
 			
-			for (p in 0...array.length) {
-				
-				var memberID:Int = p;
-				var hour:Float = array[p];
-				
-				if (hour == null) continue;
-				
-				var memberInfo:Dynamic = Members.getDB()[memberID];
-				
-				html += '
-				<dl class="' + memberInfo.parmanent_id + ' ' + memberInfo.team + '">
-					<dt>' + memberInfo.name + '</dt>
-					<dd>
-						<figure></figure>
-						<span class="time">' + hour + '</span>
-						<span class="ratio">' + Math.floor(hour / totaltime * 100) + '</span>
-						<span class="personratio">xx</span>
-					</dd>
-				</dl>';
-				
-			}
+			if (teamTime == null) teamTime = 0;
+			if (allTeamTime == null) allTeamTime = 0;
 			
-			return html;
+			var ratio:Float = getRatio(teamTime / totaltime);
+			if (Math.isNaN(ratio)) ratio = 0;
 			
-		})(memberTimes)).find('dl').each(function():Void {
+			jTarget.find('.time').text(Std.string(teamTime));
+			jTarget.find('.ratio').text(Std.string(ratio));
+			jTarget.find('.teamratio').text(Std.string(getRatio(teamTime / allTeamTime)));
+			
+			animateGraph(jTarget,ratio);
+			
+		});
+		
+	}
+	
+	/* =======================================================================
+	Set Person
+	========================================================================== */
+	private static function setPerson(jParent:JQuery,array:Array<Float>,totaltime:Float,all:Array<Float>):Void {
+		
+		jParent.html(getPersonHTML(array,totaltime,all)).find('dl').each(function():Void {
 			
 			var jTarget:JQuery = JQuery.cur;
 			var ratio  :Int    = Std.parseInt(jTarget.find('.ratio').text());
 			
-			jTarget.find('figure').delay(100 * jTarget.index()).animate({ width:(ratio * .7) + '%' }, 300);
+			animateGraph(jTarget,ratio);
 			
 		});
+		
+	}
+	
+	/* =======================================================================
+	Get Person HTML
+	========================================================================== */
+	private static function getPersonHTML(array:Array<Float>,totaltime:Float,all:Array<Float>):String {
+		
+		var html:String = '';
+		
+		for (p in 0...array.length) {
+			
+			var memberID:Int = p;
+			var hour:Float = array[p];
+			
+			if (hour == null) continue;
+			
+			var memberInfo:Dynamic = Members.getDB()[memberID];
+			
+			html += '
+			<dl class="' + memberInfo.parmanent_id + ' ' + memberInfo.team + '">
+				<dt>' + memberInfo.name + '</dt>
+				<dd>
+					<figure></figure>
+					<span class="time">' + hour + '</span>
+					<span class="ratio">' + getRatio(hour / totaltime) + '</span>
+					<span class="personratio">' + getRatio(hour / all[p]) + '</span>
+				</dd>
+			</dl>';
+			
+		}
+		
+		return html;
+		
+	}
+	
+	/* =======================================================================
+	Get Ratio
+	========================================================================== */
+	private static function getRatio(value:Float):Float {
+		
+		return Math.floor(value * 1000) / 10;
+		
+	}
+	
+	/* =======================================================================
+	Animate Graph
+	========================================================================== */
+	private static function animateGraph(jTarget:JQuery,ratio:Float):Void {
+		
+		jTarget.find('figure').delay(100 * jTarget.index()).animate({ width:(ratio * .7) + '%' }, 300);
 		
 	}
 
@@ -108,6 +175,7 @@ private class DB {
 	private static var _rowData      :Array<Dynamic>;
 	private static var _extractedData:Array<Dynamic>;
 	
+	private static var _rowList      :Dynamic;
 	private static var _extractedList:Dynamic;
 	
 	private static inline var TABLE:String = 'tasks';
@@ -149,6 +217,7 @@ private class DB {
 				
 			}
 			
+			_rowList       = getList(_rowData);
 			_extractedList = getList(_extractedData);
 			
 			onLoaded();
@@ -157,6 +226,15 @@ private class DB {
 		},where);
 		
 	}
+	
+		/* =======================================================================
+		Get Row List
+		========================================================================== */
+		public static function getRowList():Dynamic {
+			
+			return _rowList;
+			
+		}
 	
 		/* =======================================================================
 		Get Extracted List
@@ -172,15 +250,17 @@ private class DB {
 	========================================================================== */
 	private static function getList(data:Array<Dynamic>):Dynamic {
 		
-		var totaltime  :Float        = 0;
-		var members    :Array<Int>   = [];
-		var memberTimes:Array<Float> = [];
+		var totaltime  :Float             = 0;
+		var members    :Array<Int>        = [];
+		var memberTimes:Array<Float>      = [];
+		var teamTimes  :Map<String,Float> = new Map();
 		
 		for (p in 0...data.length) {
 			
 			var info    :Dynamic = data[p];
 			var memberID:Int     = info.member_id;
 			var hour    :Float   = Std.parseFloat(info.hour);
+			var team    :String  = Members.getDB()[memberID].team;
 			
 			totaltime += hour;
 			
@@ -191,9 +271,14 @@ private class DB {
 			
 			memberTimes[memberID] = memberTime + hour;
 			
+			var teamTime:Float = teamTimes.get(team);
+			if (teamTime == null) teamTime = 0;
+			
+			teamTimes.set(team,teamTime + hour);
+			
 		}
 		
-		return { totaltime:totaltime, members:members, memberTimes:memberTimes };
+		return { totaltime:totaltime, members:members, memberTimes:memberTimes, teamTimes:teamTimes };
 		
 	}
 	
