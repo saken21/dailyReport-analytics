@@ -69,7 +69,7 @@ class Result {
 		
 		jParent.find('.totaltime').find('dd').text(Std.string(totaltime));
 		jParent.find('.perperson').find('dd').text(Std.string(perperson));
-		jParent.find('.price').find('dd').text(Std.string(PAYMENT * totaltime));
+		jParent.find('.price').find('dd').text(Std.string(Math.floor(PAYMENT * totaltime)));
 		
 	}
 	
