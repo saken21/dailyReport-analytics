@@ -189,7 +189,7 @@ private class DB {
 		var clients:Array<Dynamic> = Clients.getDB();
 		var works  :Array<Dynamic> = Works.getDB();
 		
-		var where:String = 'updatetime >= "' + fromtime + '" AND updatetime <= "' + totime + '"';
+		var where:String = 'updatetime >= "' + fromtime + '" AND updatetime < "' + totime + '"';
 		
 		Ajax.getData(TABLE,COLUMNS,function(data:Array<Dynamic>):Void {
 			

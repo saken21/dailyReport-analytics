@@ -61,7 +61,7 @@ class Form {
 		var fromtime  :String = _jInputs.filter('.fromtime').prop('value');
 		var totime    :String = _jInputs.filter('.totime').prop('value');
 		
-		Result.show(clientName,workName,fromtime,totime);
+		Result.show(clientName,workName,fromtime,Handy.getPastDate(totime,-1));
 		
 		return untyped false;
 		
