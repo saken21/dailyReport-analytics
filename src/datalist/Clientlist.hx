@@ -12,7 +12,17 @@ class Clientlist {
 	========================================================================== */
 	public static function init():Void {
 		
-		new JQuery('#clientlist').html(Datalist.getHTML(Clients.getDB()));
+		var jParent:JQuery = new JQuery('#clientlist').html(Datalist.getHTML(Clients.getDB()));
+		_jOptions = jParent.find('option');
+		
+	}
+	
+	/* =======================================================================
+	Public - Get ID
+	========================================================================== */
+	public static function getID(value:String):Int {
+		
+		return _jOptions.not('disabled').filter('[value="' + value + '"]').data('id');
 		
 	}
 

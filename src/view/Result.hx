@@ -5,6 +5,8 @@ import jp.saken.utils.Ajax;
 import src.db.Clients;
 import src.db.Works;
 import src.db.Members;
+import src.datalist.Clientlist;
+import src.datalist.Worklist;
 import src.utils.Csv;
 
 class Result {
@@ -31,7 +33,7 @@ class Result {
 		========================================================================== */
 		public static function show(clientName:String,workName:String,fromtime:String,totime:String):Void {
 			
-			DB.load(Clients.getID(clientName),Works.getID(workName),fromtime,totime,function():Void {
+			DB.load(Clientlist.getID(clientName),Worklist.getID(workName),fromtime,totime,function():Void {
 				
 				if (clientName == '') clientName = '全クライアント';
 				if (workName == '') workName = '全案件';

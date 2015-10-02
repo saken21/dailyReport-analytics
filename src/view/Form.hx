@@ -3,7 +3,7 @@ package src.view;
 import js.JQuery;
 import jp.saken.utils.Dom;
 import jp.saken.utils.Handy;
-import src.db.Clients;
+import src.datalist.Clientlist;
 import src.datalist.Worklist;
 
 class Form {
@@ -44,7 +44,7 @@ class Form {
 		var jTarget:JQuery = new JQuery(event.target);
 		var value  :String = jTarget.prop('value');
 		
-		if (jTarget.hasClass('client')) Worklist.select(Clients.getID(value));
+		if (jTarget.hasClass('client')) Worklist.select(Clientlist.getID(value));
 		if (jTarget.hasClass('fromtime')) _jInputs.filter('.totime').prop('min',value);
 		
 	}

@@ -24,14 +24,5 @@ class Works {
 			return _database.getDB();
 
 		}
-		
-		/* =======================================================================
-		Public - Get ID
-		========================================================================== */
-		public static function getID(value:String):Int {
-			
-			return _database.getID(value);
-
-		}
 
 }

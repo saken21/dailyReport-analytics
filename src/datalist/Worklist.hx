@@ -37,5 +37,14 @@ class Worklist {
 			Form.setInput('work');
 
 		}
+		
+		/* =======================================================================
+		Public - Get ID
+		========================================================================== */
+		public static function getID(value:String):Int {
+			
+			return _jOptions.not('disabled').filter('[value="' + value + '"]').data('id');
+			
+		}
 
 }
